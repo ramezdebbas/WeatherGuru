@@ -1,0 +1,93 @@
+﻿<Page
+    x:Class="WeatherGuru.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:WeatherGuru"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:winRtBehaviors="using:WinRtBehaviors"
+    xmlns:win8NlBehavior="using:Win8nl.Behaviors" xmlns:cfo="using:CharmFlyoutLibrary"
+    DataContext="{Binding Main, Mode=OneWay, Source={StaticResource Locator}}"
+    mc:Ignorable="d">
+
+
+    <Grid x:Name="LayoutRoot" Background="CadetBlue">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <cfo:CharmFlyout
+           x:Name="cfoAbout"
+           Heading="About"
+           HeadingBackgroundBrush="#FF4E0000"
+           Grid.RowSpan="2">
+            <StackPanel x:Name="cfoAboutPanel">
+                <TextBlock x:Name="cfoLine1" TextWrapping="Wrap" FontSize="16">Weather Guru.</TextBlock>
+                <TextBlock x:Name="cfoBlank1" />
+                <TextBlock x:Name="cfoLine2" TextWrapping="Wrap" FontSize="16">See the weather for today and forecast for next 4 days from this fantastic app. Just enter the name of your city and it will update you with weather for the city you mention.</TextBlock>
+
+            </StackPanel>
+        </cfo:CharmFlyout>
+        <StackPanel Orientation="Vertical">
+
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <TextBlock Text="Enter your city name: " FontSize="30" VerticalAlignment="Center"></TextBlock>
+                <TextBox Text="{Binding CurrentCity, Mode=TwoWay}" Width="400" FontSize="30" Height="60" Margin="5"></TextBox>
+                <Button x:Name="btnGetWeather" Content="Update"  FontSize="30">
+                    <winRtBehaviors:Interaction.Behaviors>
+                        <win8NlBehavior:EventToCommandBehavior Event="Tapped"  Command="UpdateWeather"   />
+                    </winRtBehaviors:Interaction.Behaviors>
+                </Button>
+            </StackPanel>
+            <ListBox ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ItemsSource="{Binding DayList}" SelectedItem="{Binding CurrentDay, Mode=TwoWay}">
+                <ListBox.Resources>
+                    <DataTemplate x:Key="DayTemplate">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="AUTO"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Image Stretch="Uniform" Width="70" Margin="-15,-20,-15,-20" Source="{Binding IconPath, Mode=OneWay}"></Image>
+                            <TextBlock Grid.Row="1" Margin="5" Text="{Binding Time.DayOfWeek, Mode=OneWay}"></TextBlock>
+                            <Rectangle  Grid.Row="1" Height="3" VerticalAlignment="Bottom" HorizontalAlignment="Stretch">
+                                <Rectangle.Fill>
+                                    <SolidColorBrush Color="CadetBlue"/>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Grid>
+                    </DataTemplate>
+                    <ItemsPanelTemplate x:Key="ItemsPanelTemplate1">
+                        <VirtualizingStackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.Resources>
+                <ListBox.ItemsPanel>
+                    <StaticResource ResourceKey="ItemsPanelTemplate1"/>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <StaticResource ResourceKey="DayTemplate"/>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+
+        </StackPanel>
+        <Grid Grid.Row="1" DataContext="{Binding CurrentDay}">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Rectangle Grid.RowSpan="2">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Offset="0"/>
+                        <GradientStop Color="{Binding TempColor, Mode=OneWay}" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <Image Grid.Row="0" Source="{Binding IconPath, Mode=OneWay}"></Image>
+            <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding temp}" FontSize="220"></TextBlock>
+        </Grid>
+        <TextBox x:Name="SnappedBox" Visibility="Collapsed" Background="Black" Foreground="White" Text="Please shift to full or filled mode to continue with the app." HorizontalAlignment="Center" FontSize="22" Width="314" TextWrapping="Wrap" Margin="0,10,6,0" Grid.RowSpan="2"/>
+        
+    </Grid>
+
+</Page>
